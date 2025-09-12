@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Film Company</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" />
+</head>
+<body>
+  <header class="container">
+    <a href="{{ url_for('index') }}"><h1>Film Company</h1></a>
+    <nav>
+      <a href="{{ url_for('cart') }}">Cart</a>
+      <a href="{{ url_for('admin_login') }}">Admin</a>
+    </nav>
+  </header>
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="container">
+    <p>&copy; {{ 2025 }} Film Company</p>
+  </footer>
+</body>
+</html>

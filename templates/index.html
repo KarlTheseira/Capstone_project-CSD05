@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Shop</h2>
+<div class="grid">
+  {% for p in products %}
+  <div class="card">
+    <h3><a href="{{ url_for('product', product_id=p.id) }}">{{ p.title }}</a></h3>
+    <p>{{ (p.price_cents/100)|round(2) }} {{ config.CURRENCY|upper }}</p>
+    <form action="{{ url_for('cart_add', product_id=p.id) }}" method="post">
+      <input type="hidden" name="qty" value="1" />
+      <button type="submit">Add to Cart</button>
+    </form>
+  </div>
+  {% else %}
+  <p>No products yet.</p>
+  {% endfor %}
+</div>
+{% endblock %}

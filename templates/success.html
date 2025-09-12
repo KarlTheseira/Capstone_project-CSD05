@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Thank you!</h2>
+<p>Your payment was successful.</p>
+{% if links %}
+  <h3>Your downloads</h3>
+  <ul>
+    {% for l in links %}
+      <li><a href="{{ l.url }}">{{ l.title }}</a></li>
+    {% endfor %}
+  </ul>
+{% endif %}
+<p>To see your purchases later, visit /my-downloads?email=you@example.com</p>
+{% endblock %}

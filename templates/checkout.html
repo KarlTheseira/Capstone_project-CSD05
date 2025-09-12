@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Checkout</h2>
+<form method="post">
+  <label>Email <input type="email" name="email" required /></label>
+  <button type="submit">Pay with Stripe</button>
+</form>
+<p>Use Stripe test card 4242 4242 4242 4242, any future date, any CVC.</p>
+{% endblock %}

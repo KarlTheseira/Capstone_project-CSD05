@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Your Cart</h2>
+{% if items %}
+<table>
+  <tr><th>Item</th><th>Qty</th><th>Subtotal</th><th></th></tr>
+  {% for it in items %}
+  <tr>
+    <td>{{ it.product.title }}</td>
+    <td>{{ it.qty }}</td>
+    <td>{{ (it.subtotal/100)|round(2) }} {{ config.CURRENCY|upper }}</td>
+    <td>
+      <form action="{{ url_for('cart_remove', product_id=it.product.id) }}" method="post">
+        <button>Remove</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+<p><strong>Total:</strong> {{ (total/100)|round(2) }} {{ config.CURRENCY|upper }}</p>
+<a class="btn" href="{{ url_for('checkout') }}">Checkout</a>
+{% else %}
+<p>Your cart is empty.</p>
+{% endif %}
+{% endblock %}

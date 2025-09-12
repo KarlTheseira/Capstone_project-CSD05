@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Admin Dashboard</h2>
+{% if error %}<p class="error">{{ error }}</p>{% endif %}
+<form method="post" enctype="multipart/form-data">
+  <label>Title <input name="title" required /></label>
+  <label>Description <textarea name="description"></textarea></label>
+  <label>Price (e.g., 19.99) <input name="price" required /></label>
+  <label>Media File <input type="file" name="media" accept="image/*,video/*" required /></label>
+  <button type="submit">Add Product</button>
+</form>
+<hr />
+<h3>Existing Products</h3>
+<ul>
+  {% for p in products %}
+  <li>#{{ p.id }} — {{ p.title }} — {{ (p.price_cents/100)|round(2) }} {{ config.CURRENCY|upper }}</li>
+  {% else %}
+  <li>No products yet.</li>
+  {% endfor %}
+</ul>
+{% endblock %}
