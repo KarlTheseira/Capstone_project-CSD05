@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Welcome · Flash Studio{% endblock %}
+{% block content %}
+  <div class="text-center py-5">
+    <h1 class="display-5 fw-bold">Welcome to Flash Studio</h1>
+    <p class="lead text-muted">Please log in or create an account to continue.</p>
+    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mt-3">
+      <a class="btn btn-primary btn-lg px-4" href="{{ url_for('auth.login') }}">Login</a>
+      <a class="btn btn-outline-primary btn-lg px-4" href="{{ url_for('auth.register') }}">Sign up</a>
+    </div>
+  </div>
+{% endblock %}

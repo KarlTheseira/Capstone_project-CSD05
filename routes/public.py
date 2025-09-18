@@ -1,10 +1,14 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, session
 from models import Product, db
 
 public_bp = Blueprint('public', __name__)
 
 @public_bp.route("/")
 def index():
+    #if nobody is logged in, show homepage
+    if not session.get("user_id") and not session.get("admin"):
+        return render_template("home.html")
+
     q          = request.args.get("q", "").strip()
     min_price  = request.args.get("min_price", type=int)
     max_price  = request.args.get("max_price", type=int)

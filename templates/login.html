@@ -1,23 +1,53 @@
 {% extends "base.html" %}
+{% block title %}Sign in · Flash Studio{% endblock %}
+
 {% block content %}
-<h2>Login</h2>
+<div class="auth-hero py-5">
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-5">
+      <div class="card shadow auth-card">
+        <div class="card-body p-4 p-md-5">
+          <div class="text-center mb-4">
+            <!-- Small camera/bolt emblem (SVG so no extra file needed) -->
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <rect x="3" y="6" width="18" height="12" rx="2" stroke="currentColor" opacity=".35" stroke-width="1.6"/>
+              <path d="M11 6l-1.2-1.8A2 2 0 0 0 8.2 3H6.8A2 2 0 0 0 5 4.2L4.4 6" 
+                    stroke="currentColor" opacity=".35" stroke-width="1.6" />
+              <path d="M13.5 6L9.8 12h3.2l-2.5 6 5-7h-3z" fill="currentColor"/>
+            </svg>
+            <h1 class="h3 mt-3 mb-1">Sign in</h1>
+            <p class="text-muted mb-0">Sign in with your email address</p>
+          </div>
 
-{% if error %}
-<p class="error">{{ error }}</p>
-{% endif %}
+          <form method="post" novalidate>
+            <div class="mb-3">
+              <label class="form-label">Email address</label>
+              <!-- keep name='username' to match your backend -->
+              <input class="form-control form-control-lg" name="username" placeholder="Email Address" required>
+            </div>
+            <div class="mb-2">
+              <label class="form-label">Password</label>
+              <input class="form-control form-control-lg" type="password" name="password" placeholder="Password" required>
+            </div>
 
-<form action="{{ url_for('login') }}" method="post">
-  <label>Email
-    <input type="email" name="email" required />
-  </label>
-  <label>Password
-    <input type="password" name="password" required />
-  </label>
-  <button type="submit">Log In</button>
-</form>
+            <div class="mb-3">
+              <a class="small" href="#">Forgot your password?</a>
+            </div>
 
-<p>
-  Don’t have an account?
-  <a href="{{ url_for('register') }}">Register here</a>.
-</p>
+            <button class="btn btn-primary btn-lg w-100">Sign in</button>
+          </form>
+
+          {% if error %}
+            <div class="alert alert-danger mt-3 mb-0">{{ error }}</div>
+          {% endif %}
+
+          <div class="text-center mt-4">
+            <span class="text-muted">Don't have an account?</span>
+            <a href="{{ url_for('auth.register') }}" class="ms-1">Sign up now</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

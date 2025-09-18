@@ -93,6 +93,45 @@ def delete(product_id):
     flash("Product deleted successfully.", "success")
     return redirect(url_for("admin.dashboard"))
 
+@admin_bp.route("/edit/<int:product_id>", methods=["GET", "POST"])
+def edit_product(product_id):
+    require_admin()
+    product = Product.query.get_or_404(product_id)
+
+    if request.method == "POST":
+        # basic fields
+        product.title = request.form.get("title", "").strip()
+        product.description = request.form.get("description", "").strip()
+        product.stock = request.form.get("stock", type=int) or 0
+
+        # price -> cents
+        price = request.form.get("price", type=float)
+        if price is not None:
+            product.price_cents = int(round(price * 100))
+
+        # optional category
+        product.category = request.form.get("category", "").strip() or product.category
+
+        # optional file updates
+        file = request.files.get("media")
+        thumb = request.files.get("thumbnail")
+
+        if file and file.filename:
+            media_key, _url = save_media(file)
+            product.media_key = media_key
+            product.mime_type = file.mimetype
+
+        if thumb and thumb.filename:
+            thumbnail_key, _ = save_media(thumb)
+            product.thumbnail_key = thumbnail_key
+
+        db.session.commit()
+        flash("Product updated.", "success")
+        return redirect(url_for("admin.dashboard"))
+
+    # GET -> render edit form
+    return render_template("admin_product_edit.html", product=product)
+
 @admin_bp.route("/orders")
 def orders():
     require_admin()

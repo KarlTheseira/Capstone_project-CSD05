@@ -1,30 +1,27 @@
 {% extends "base.html" %}
+{% block title %}Orders · Flash Studio{% endblock %}
 {% block content %}
-<h2>All Orders</h2>
-
-<table>
+<h1 class="h3 mb-3">Orders</h1>
+<table class="table table-striped align-middle">
   <thead>
-    <tr>
-      <th>ID</th>
-      <th>User</th>
-      <th>Date</th>
-      <th>Total</th>
-      <th>Status</th>
-      <th>Actions</th>
-    </tr>
+    <tr><th>ID</th><th>Customer</th><th>Total</th><th>Status</th><th>Date</th><th class="text-end">Actions</th></tr>
   </thead>
   <tbody>
-    {% for order in orders %}
-    <tr>
-      <td>{{ order.id }}</td>
-      <td>{{ order.user.email if order.user else 'Guest' }}</td>
-      <td>{{ order.created_at.strftime('%Y-%m-%d') }}</td>
-      <td>{{ order.amount_cents / 100 }} {{ order.currency.upper() }}</td>
-      <td>{{ order.status }}</td>
-      <td>
-        <a href="{{ url_for('admin_order_view', order_id=order.id) }}">View</a>  
-      </td>
-    </tr>
+    {% for o in orders %}
+      <tr>
+        <td>#{{ o.id }}</td>
+        <td>{{ o.customer_email }}</td>
+        <td>S$ {{ '%.2f' % (o.total_cents / 100.0) }}</td>
+        <td>
+          <span class="badge text-bg-{{ 'success' if o.status=='paid' else 'warning' if o.status=='pending' else 'secondary' }}">
+            {{ o.status|title }}
+          </span>
+        </td>
+        <td>{{ o.created_at.strftime('%Y-%m-%d %H:%M') if o.created_at else '' }}</td>
+        <td class="text-end">
+          <a class="btn btn-sm btn-outline-primary" href="{{ url_for('admin.order_detail', order_id=o.id) }}">View</a>
+        </td>
+      </tr>
     {% endfor %}
   </tbody>
 </table>

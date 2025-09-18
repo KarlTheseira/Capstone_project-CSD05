@@ -1,67 +1,115 @@
 {% extends "base.html" %}
+{% block title %}Admin Dashboard · Flash Studio{% endblock %}
+
 {% block content %}
-<h2>Admin Dashboard</h2>
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 mb-0">Dashboard</h1>
+  <a class="btn btn-outline-primary" href="{{ url_for('admin.orders') }}">View Orders</a>
+</div>
+
+<!-- Add Product (inline, collapsible) -->
+<button class="btn btn-primary mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#newProductForm">
+  Add Product
+</button>
+
+<div id="newProductForm" class="collapse mb-4">
+  <form class="card card-body shadow-sm" method="post"
+        action="{{ url_for('admin.dashboard') }}"
+        enctype="multipart/form-data">
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Title</label>
+        <input class="form-control" name="title" required>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Stock</label>
+        <input class="form-control" type="number" min="0" name="stock" value="0" required>
+      </div>
+
+      <div class="col-12">
+        <label class="form-label">Description</label>
+        <textarea class="form-control" name="description" rows="3" placeholder="Short description"></textarea>
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Price (S$)</label>
+        <input class="form-control" type="number" step="0.01" min="0" name="price" placeholder="0.00" required>
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Media file (required)</label>
+        <input class="form-control" type="file" name="media" accept="image/*,video/*,application/pdf" required>
+        <div class="form-text">Stored via <code>utils.media.save_media</code>.</div>
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Thumbnail (optional)</label>
+        <input class="form-control" type="file" name="thumbnail" accept="image/*">
+      </div>
+    </div>
+
+    <div class="mt-3 d-flex gap-2">
+      <button class="btn btn-primary">Save Product</button>
+      <button class="btn btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#newProductForm">Cancel</button>
+    </div>
+  </form>
+</div>
 
 {% if error %}
-  <p class="error">{{ error }}</p>
+  <div class="alert alert-danger">{{ error }}</div>
 {% endif %}
 
-<!-- Product Upload Form -->
-<form method="post" enctype="multipart/form-data">
-  <label>Title <input name="title" required /></label>
-  <label>Description <textarea name="description"></textarea></label>
-  <label>Price (e.g., 19.99) <input name="price" required /></label>
-  <label>Media File <input type="file" name="media" accept="image/*,video/*" required /></label>
-  <label>Thumbnail Image <input type="file" name="thumbnail" accept="image/*" /></label>
-  <button type="submit">Add Product</button>
-  <label>Initial Stock <input type="number" name="stock" min="0" value="0" required />
-  <label>Stock <input type="number" name="stock" min="0" value="0" required />
-  </label>         <!-- ✔️ new field for stock -->
-  
-  <button type="submit">Add Product</button>
+<!-- Products table -->
+{% if products %}
+  <div class="table-responsive">
+    <table class="table table-striped align-middle">
+      <thead>
+        <tr>
+          <th style="min-width: 220px;">Title</th>
+          <th>Price</th>
+          <th>Stock</th>
+          <th>Created</th>
+          <th class="text-end" style="min-width: 320px;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in products %}
+          <tr>
+            <td>
+              <a class="text-decoration-none" href="{{ url_for('public.product', product_id=p.id) }}">{{ p.title }}</a>
+            </td>
+            <td>S$ {{ '%.2f' % (p.price_cents / 100.0) }}</td>
+            <td>{{ p.stock }}</td>
+            <td>{{ p.created_at.strftime('%Y-%m-%d %H:%M') if p.created_at else '—' }}</td>
+            <td class="text-end">
+              <!-- NEW: Edit -->
+              <a class="btn btn-sm btn-outline-primary me-1"
+                 href="{{ url_for('admin.edit_product', product_id=p.id) }}">
+                Edit
+              </a>
 
-</form>
+              <!-- Update stock -->
+              <form class="d-inline-flex align-items-center gap-2 me-1" method="post"
+                    action="{{ url_for('admin.update_stock', product_id=p.id) }}">
+                <input class="form-control form-control-sm" style="width: 90px;"
+                       type="number" min="0" name="stock" value="{{ p.stock }}" required>
+                <button class="btn btn-sm btn-outline-primary">Update</button>
+              </form>
 
-<hr />
-
-<h3>Existing Products</h3>
-<ul>
-  {% for p in products %}
-  <form method="post" action="{{ url_for('admin_delete', product_id=p.id) }}">
-  <button type="submit">Delete</button>
-</form>
-  <li>
-    #{{ p.id }} — {{ p.title }} — {{ (p.price_cents/100)|round(2) }} {{ config.CURRENCY|upper }} — Stock: {{ p.stock }}
-
-    <form
-      action="{{ url_for('admin_update_stock', product_id=p.id) }}"
-      method="post"
-      style="display:inline;"
-    >
-      <input
-        type="number"
-        name="stock"
-        min="0"
-        value="{{ p.stock }}"
-      />
-      <button type="submit">Update Stock</button>
-    </form>
-
-    <form
-      action="{{ url_for('admin_delete', product_id=p.id) }}"
-      method="post"
-      style="display:inline;"
-    >
-      <button
-        type="submit"
-        onclick="return confirm('Delete this product?')"
-      >
-        Delete
-      </button>
-    </form>
-  </li>
-  {% else %}
-  <li>No products yet.</li>
-  {% endfor %}
-</ul>
+              <!-- Delete -->
+              <form class="d-inline" method="post"
+                    action="{{ url_for('admin.delete', product_id=p.id) }}"
+                    onsubmit="return confirm('Delete &quot;{{ p.title }}&quot;?');">
+                <button class="btn btn-sm btn-outline-danger">Delete</button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <div class="text-center text-muted py-5">No products yet. Use “Add Product” to create one.</div>
+{% endif %}
 {% endblock %}

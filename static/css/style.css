@@ -1,9 +1,72 @@
-body { font-family: system-ui, Arial, sans-serif; margin: 0; }
-.container { max-width: 960px; margin: 0 auto; padding: 1rem; }
-header { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #eee; }
-.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
-.card { border: 1px solid #eee; padding: 1rem; border-radius: 8px; }
-button, .btn { background: #2563eb; color: white; border: 0; padding: .5rem .75rem; border-radius: 6px; cursor: pointer; text-decoration: none; }
-table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
-th, td { padding: .5rem; border-bottom: 1px solid #eee; text-align: left; }
-.error { color: #b91c1c; }
+/* ===== Flash Studio Theme ===== */
+:root{
+  /* Bootstrap color tokens */
+  --bs-primary: #ff9800;
+  --bs-primary-rgb: 255,152,0;
+
+  /* Optional neutrals */
+  --fs-text: #1f2937;
+  --fs-muted: #6b7280;
+  --fs-border: #e5e7eb;
+}
+
+/* Buttons use our orange */
+.btn-primary{
+  background-color: var(--bs-primary) !important;
+  border-color: var(--bs-primary) !important;
+}
+.btn-primary:hover{
+  background-color: #e68900 !important;
+  border-color: #e68900 !important;
+}
+.btn-outline-primary{
+  color: var(--bs-primary) !important;
+  border-color: var(--bs-primary) !important;
+}
+.btn-outline-primary:hover{
+  background-color: var(--bs-primary) !important;
+  color: #fff !important;
+}
+
+/* Navbar + logo */
+.navbar-brand{
+  display:flex; align-items:center; gap:.5rem;
+  font-weight:700;
+}
+.navbar-brand img{ height:34px; }
+.navbar .nav-link:hover{ color: var(--bs-primary) !important; }
+
+/* Card polish */
+.card{ border:1px solid var(--fs-border); }
+.card-img-top{ object-fit:cover; height:200px; }
+
+/* Headings / text */
+h1,h2,h3{ color: var(--fs-text); }
+.text-muted{ color: var(--fs-muted) !important; }
+
+
+/* Small polish on top of Bootstrap */
+body { scroll-behavior: smooth; }
+.navbar .nav-link { color:#444; }
+.navbar .nav-link:hover { color:#fde90d; }
+.card-img-top { object-fit: cover; height: 200px; }
+
+.card-link:hover { box-shadow: 0 8px 24px rgba(0,0,0,.08); }
+.card-link .card-title { transition: color .15s; }
+.card-link:hover .card-title { color: var(--bs-primary); }
+
+/* Auth pages */
+.auth-hero {
+  background:
+    radial-gradient(1200px 500px at -10% -10%, rgba(255,145,0,0.06), transparent 60%),
+    radial-gradient(1000px 400px at 110% -20%, rgba(255,145,0,0.06), transparent 60%);
+  border-radius: 12px;
+}
+
+.auth-card {
+  border-radius: 16px;
+}
+
+.auth-card svg {
+  color: #ff8a00; /* matches Flash Studio orange */
+}

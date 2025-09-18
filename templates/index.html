@@ -1,32 +1,61 @@
 {% extends "base.html" %}
+{% block title %}Products · Flash Studio{% endblock %}
 {% block content %}
-<h1>Products</h1>
 
-<form method="get" action="{{ url_for('public.index') }}" class="filters">
-    <input type="text" name="q" value="{{ filters.q }}" placeholder="Search">
-    <input type="number" name="min_price" value="{{ filters.min_price }}" placeholder="Min Price">
-    <input type="number" name="max_price" value="{{ filters.max_price }}" placeholder="Max Price">
-    <select name="category">
-        <option value="">All Categories</option>
-        {% for c in categories %}
-            <option value="{{ c }}" {% if filters.category == c %}selected{% endif %}>{{ c }}</option>
-        {% endfor %}
+<form class="row g-2 mb-4" method="get">
+  <div class="col-12 col-md-4">
+    <input class="form-control" name="q" placeholder="Search products…" value="{{ (filters.q or '') }}">
+  </div>
+  <div class="col-6 col-md-2">
+    <input class="form-control" name="min_price" placeholder="Min price" value="{{ (filters.min_price or '') }}">
+  </div>
+  <div class="col-6 col-md-2">
+    <input class="form-control" name="max_price" placeholder="Max price" value="{{ (filters.max_price or '') }}">
+  </div>
+  <div class="col-6 col-md-2">
+    <select class="form-select" name="category">
+      <option value="">All Categories</option>
+      {% for c in categories %}
+        <option value="{{ c }}" {{ 'selected' if filters.category == c else '' }}>{{ c|title }}</option>
+      {% endfor %}
     </select>
-    <select name="media_type">
-        <option value="">All Media Types</option>
-        {% for m in media_types %}
-            <option value="{{ m }}" {% if filters.media_type == m %}selected{% endif %}>{{ m }}</option>
-        {% endfor %}
+  </div>
+  <div class="col-6 col-md-2">
+    <select class="form-select" name="media_type">
+      <option value="">All Media Types</option>
+      {% for m in media_types %}
+        <option value="{{ m }}" {{ 'selected' if filters.media_type == m else '' }}>{{ m }}</option>
+      {% endfor %}
     </select>
-    <button type="submit">Filter</button>
+  </div>
+  <div class="col-12 col-md-2">
+    <button class="btn btn-primary w-100">Filter</button>
+  </div>
 </form>
 
-<ul>
-{% for p in products %}
-    <li>
-        <a href="{{ url_for('public.product', product_id=p.id) }}">{{ p.title }}</a>
-        — ${{ "%.2f"|format(p.price_cents / 100) }}
-    </li>
-{% endfor %}
-</ul>
+{% if products %}
+  <div class="row g-4">
+    {% for p in products %}
+      <div class="col-12 col-lg-6">
+        <!-- Make the whole card a link -->
+        <a href="{{ url_for('public.product', product_id=p.id) }}"
+           class="card h-100 shadow-sm text-decoration-none text-reset card-link">
+          {% if p.thumbnail_key %}
+            <img class="card-img-top" src="{{ p.thumbnail_url or '/static/uploads/' ~ p.thumbnail_key }}" alt="{{ p.title }}">
+          {% endif %}
+          <div class="card-body">
+            <h5 class="card-title mb-1">{{ p.title }}</h5>
+            <p class="card-text text-muted small mb-3">
+              {{ p.description[:120] }}{% if p.description and p.description|length > 120 %}…{% endif %}
+            </p>
+            <div class="fw-semibold">S$ {{ '%.2f' % (p.price_cents / 100.0) }}</div>
+          </div>
+        </a>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="text-center text-muted py-5">No products found.</div>
+{% endif %}
+
 {% endblock %}

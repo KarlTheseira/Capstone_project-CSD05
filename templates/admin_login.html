@@ -1,18 +1,20 @@
 {% extends "base.html" %}
+{% block title %}Admin Login · Flash Studio{% endblock %}
 {% block content %}
-<h1>Admin Login</h1>
-
-{% if error %}
-    <p style="color: red;">{{ error }}</p>
-{% endif %}
-
-<form method="post" action="{{ url_for('admin.login') }}">
-    <label for="username">Username:</label>
-    <input type="text" name="username" id="username" required>
-
-    <label for="password">Password:</label>
-    <input type="password" name="password" id="password" required>
-
-    <button type="submit">Login</button>
-</form>
+<div class="row justify-content-center">
+  <div class="col-12 col-md-6 col-lg-4">
+    <h1 class="h3 mb-3">Admin Login</h1>
+    <form method="post" class="card card-body shadow-sm">
+      <div class="mb-3">
+        <label class="form-label">Username</label>
+        <input class="form-control" name="username" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Password</label>
+        <input class="form-control" type="password" name="password" required>
+      </div>
+      <button class="btn btn-primary w-100">Login</button>
+    </form>
+  </div>
+</div>
 {% endblock %}
