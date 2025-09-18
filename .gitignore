@@ -9,3 +9,9 @@ instance/
 media/
 .pytest_cache/
 .mypy_cache/
+*.sqlite3
+.vscode/
+*.log
+*.db
+*.DS_Store
+.venv/

@@ -1,18 +1,90 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Shop</h2>
-<div class="grid">
-  {% for p in products %}
-  <div class="card">
-    <h3><a href="{{ url_for('product', product_id=p.id) }}">{{ p.title }}</a></h3>
-    <p>{{ (p.price_cents/100)|round(2) }} {{ config.CURRENCY|upper }}</p>
-    <form action="{{ url_for('cart_add', product_id=p.id) }}" method="post">
-      <input type="hidden" name="qty" value="1" />
-      <button type="submit">Add to Cart</button>
-    </form>
+  <h2>Shop</h2>
+
+  {# ————— Search & Filter Form ————— #}
+  <form method="get" action="{{ url_for('index') }}" class="filters">
+    <!-- Title search -->
+    <input
+      type="text"
+      name="q"
+      placeholder="Search by title…"
+      value="{{ filters.q }}"
+    />
+
+    <!-- Price range -->
+    <input
+      type="number"
+      name="min_price"
+      placeholder="Min $"
+      min="0"
+      value="{{ filters.min_price if filters.min_price is not none }}"
+    />
+    <input
+      type="number"
+      name="max_price"
+      placeholder="Max $"
+      min="0"
+      value="{{ filters.max_price if filters.max_price is not none }}"
+    />
+
+    <!-- Category dropdown -->
+    <select name="category">
+      <option value="">All Categories</option>
+      {% for cat in categories %}
+        <option
+          value="{{ cat }}"
+          {% if filters.category == cat %}selected{% endif %}
+        >
+          {{ cat }}
+        </option>
+      {% endfor %}
+    </select>
+
+    <!-- Media-type dropdown -->
+    <select name="media_type">
+      <option value="">All Media Types</option>
+      {% for mt in media_types %}
+        {% set prefix = mt.split('/')[0] + '/' %}
+        <option
+          value="{{ prefix }}"
+          {% if filters.media_type == prefix %}selected{% endif %}
+        >
+          {{ prefix.rstrip('/').capitalize() }}
+        </option>
+      {% endfor %}
+    </select>
+
+    <button type="submit">Filter</button>
+  </form>
+
+  {# ————— Product Grid ————— #}
+  <div class="grid">
+    {% for p in products %}
+      <div class="card">
+        {% if p.thumbnail_key %}
+          <img
+            src="{{ url_for('media', filename=p.thumbnail_key) }}"
+            alt="{{ p.title }}"
+            style="width:100%; height:auto;"
+          />
+        {% endif %}
+
+        <h3>
+          <a href="{{ url_for('product', product_id=p.id) }}">{{ p.title }}</a>
+        </h3>
+        <p>
+          {{ (p.price_cents / 100) | round(2) }}
+          {{ config.CURRENCY | upper }}
+        </p>
+
+        <form action="{{ url_for('cart_add', product_id=p.id) }}" method="post">
+          <input type="hidden" name="qty" value="1" />
+          <button type="submit">Add to Cart</button>
+        </form>
+      </div>
+    {% else %}
+      <p>No products available.</p>
+    {% endfor %}
   </div>
-  {% else %}
-  <p>No products yet.</p>
-  {% endfor %}
-</div>
 {% endblock %}

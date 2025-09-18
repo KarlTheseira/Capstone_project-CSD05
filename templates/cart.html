@@ -1,24 +1,47 @@
 {% extends "base.html" %}
 {% block content %}
 <h2>Your Cart</h2>
+
 {% if items %}
-<table>
-  <tr><th>Item</th><th>Qty</th><th>Subtotal</th><th></th></tr>
-  {% for it in items %}
-  <tr>
-    <td>{{ it.product.title }}</td>
-    <td>{{ it.qty }}</td>
-    <td>{{ (it.subtotal/100)|round(2) }} {{ config.CURRENCY|upper }}</td>
-    <td>
-      <form action="{{ url_for('cart_remove', product_id=it.product.id) }}" method="post">
-        <button>Remove</button>
-      </form>
-    </td>
-  </tr>
-  {% endfor %}
+<table class="cart-table">
+  <thead>
+    <tr>
+      <th>Product</th>
+      <th>Price</th>
+      <th>Quantity</th>
+      <th>Subtotal</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for it in items %}
+    <tr>
+      <td>{{ it.product.title }}</td>
+      <td>{{ it.product.price_cents / 100 | round(2) }} USD</td>
+      <td>
+        <form action="{{ url_for('cart_remove', product_id=it.product.id) }}" method="post" style="display:inline;">
+          <button type="submit" class="qty-btn">−</button>
+        </form>
+        {{ it.qty }}
+        <form action="{{ url_for('cart_add', product_id=it.product.id) }}" method="post" style="display:inline;">
+          <button type="submit" class="qty-btn">+</button>
+        </form>
+      </td>
+      <td>{{ (it.product.price_cents * it.qty) / 100 | round(2) }} USD</td>
+      <td>
+        <form action="{{ url_for('cart_delete', product_id=it.product.id) }}" method="post">
+          <button type="submit" class="remove-btn">Remove</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
 </table>
-<p><strong>Total:</strong> {{ (total/100)|round(2) }} {{ config.CURRENCY|upper }}</p>
-<a class="btn" href="{{ url_for('checkout') }}">Checkout</a>
+
+<p><strong>Total:</strong> {{ total / 100 | round(2) }} USD</p>
+
+<a href="{{ url_for('checkout') }}" class="btn btn-primary">Proceed to Checkout</a>
+
 {% else %}
 <p>Your cart is empty.</p>
 {% endif %}

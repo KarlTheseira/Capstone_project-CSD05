@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Order #{{ order.id }}</h2>
+
+<p><strong>User:</strong> {{ order.user.email if order.user else 'Guest' }}</p>
+<p><strong>Date:</strong> {{ order.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+<p><strong>Total:</strong> {{ order.amount_cents / 100 }} {{ order.currency.upper() }}</p>
+
+<h3>Items</h3>
+<ul>
+  {% for item in order.items %}
+    <li>{{ item.quantity }} × {{ item.product.title }} — {{ (item.unit_price_cents * item.quantity) / 100 }} USD</li>
+  {% endfor %}
+</ul>
+
+<h3>Update Status</h3>
+<form method="post">
+  <select name="status">
+    <option value="pending" {% if order.status == 'pending' %}selected{% endif %}>Pending</option>
+    <option value="paid" {% if order.status == 'paid' %}selected{% endif %}>Paid</option>
+    <option value="shipped" {% if order.status == 'shipped' %}selected{% endif %}>Shipped</option>
+    <option value="delivered" {% if order.status == 'delivered' %}selected{% endif %}>Delivered</option>
+  </select>
+  <button type="submit">Save</button>
+</form>
+{% endblock %}

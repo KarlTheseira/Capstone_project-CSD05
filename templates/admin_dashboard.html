@@ -1,19 +1,65 @@
 {% extends "base.html" %}
 {% block content %}
 <h2>Admin Dashboard</h2>
-{% if error %}<p class="error">{{ error }}</p>{% endif %}
+
+{% if error %}
+  <p class="error">{{ error }}</p>
+{% endif %}
+
+<!-- Product Upload Form -->
 <form method="post" enctype="multipart/form-data">
   <label>Title <input name="title" required /></label>
   <label>Description <textarea name="description"></textarea></label>
   <label>Price (e.g., 19.99) <input name="price" required /></label>
   <label>Media File <input type="file" name="media" accept="image/*,video/*" required /></label>
+  <label>Thumbnail Image <input type="file" name="thumbnail" accept="image/*" /></label>
   <button type="submit">Add Product</button>
+  <label>Initial Stock <input type="number" name="stock" min="0" value="0" required />
+  <label>Stock <input type="number" name="stock" min="0" value="0" required />
+  </label>         <!-- ✔️ new field for stock -->
+  
+  <button type="submit">Add Product</button>
+
 </form>
+
 <hr />
+
 <h3>Existing Products</h3>
 <ul>
   {% for p in products %}
-  <li>#{{ p.id }} — {{ p.title }} — {{ (p.price_cents/100)|round(2) }} {{ config.CURRENCY|upper }}</li>
+  <form method="post" action="{{ url_for('admin_delete', product_id=p.id) }}">
+  <button type="submit">Delete</button>
+</form>
+  <li>
+    #{{ p.id }} — {{ p.title }} — {{ (p.price_cents/100)|round(2) }} {{ config.CURRENCY|upper }} — Stock: {{ p.stock }}
+
+    <form
+      action="{{ url_for('admin_update_stock', product_id=p.id) }}"
+      method="post"
+      style="display:inline;"
+    >
+      <input
+        type="number"
+        name="stock"
+        min="0"
+        value="{{ p.stock }}"
+      />
+      <button type="submit">Update Stock</button>
+    </form>
+
+    <form
+      action="{{ url_for('admin_delete', product_id=p.id) }}"
+      method="post"
+      style="display:inline;"
+    >
+      <button
+        type="submit"
+        onclick="return confirm('Delete this product?')"
+      >
+        Delete
+      </button>
+    </form>
+  </li>
   {% else %}
   <li>No products yet.</li>
   {% endfor %}
