@@ -16,36 +16,58 @@
   <form class="card card-body shadow-sm" method="post"
         action="{{ url_for('admin.dashboard') }}"
         enctype="multipart/form-data">
+    {{ csrf_token() }}
     <div class="row g-3">
+      <!-- Title: Required, text input -->
       <div class="col-md-6">
         <label class="form-label">Title</label>
-        <input class="form-control" name="title" required>
+        <input class="form-control" name="title" required
+               aria-describedby="titleHelp">
+        <div id="titleHelp" class="form-text">Enter a descriptive title for the product</div>
       </div>
 
+      <!-- Stock: Required, non-negative integer -->
       <div class="col-md-6">
         <label class="form-label">Stock</label>
-        <input class="form-control" type="number" min="0" name="stock" value="0" required>
+        <input class="form-control" type="number" min="0" name="stock" value="0" required
+               aria-describedby="stockHelp">
+        <div id="stockHelp" class="form-text">Enter the available quantity</div>
       </div>
 
+      <!-- Description: Optional, text area -->
       <div class="col-12">
         <label class="form-label">Description</label>
-        <textarea class="form-control" name="description" rows="3" placeholder="Short description"></textarea>
+        <textarea class="form-control" name="description" rows="3" 
+                  placeholder="Short description"
+                  aria-describedby="descHelp"></textarea>
+        <div id="descHelp" class="form-text">Provide details about the product (optional)</div>
       </div>
 
+      <!-- Price: Required, positive decimal number -->
       <div class="col-md-4">
         <label class="form-label">Price (S$)</label>
-        <input class="form-control" type="number" step="0.01" min="0" name="price" placeholder="0.00" required>
+        <input class="form-control" type="number" step="0.01" min="0" 
+               name="price" placeholder="0.00" required
+               aria-describedby="priceHelp">
+        <div id="priceHelp" class="form-text">Enter price in Singapore dollars</div>
       </div>
 
+      <!-- Media: Required, file upload with specific formats -->
       <div class="col-md-4">
         <label class="form-label">Media file (required)</label>
-        <input class="form-control" type="file" name="media" accept="image/*,video/*,application/pdf" required>
-        <div class="form-text">Stored via <code>utils.media.save_media</code>.</div>
+        <input class="form-control" type="file" name="media" 
+               accept="image/*,video/*,application/pdf" required
+               aria-describedby="mediaHelp">
+        <div id="mediaHelp" class="form-text">Upload image, video, or PDF (max 10MB)</div>
       </div>
 
+      <!-- Thumbnail: Optional, image only -->
       <div class="col-md-4">
         <label class="form-label">Thumbnail (optional)</label>
-        <input class="form-control" type="file" name="thumbnail" accept="image/*">
+        <input class="form-control" type="file" name="thumbnail" 
+               accept="image/*"
+               aria-describedby="thumbHelp">
+        <div id="thumbHelp" class="form-text">Optional preview image (recommended)</div>
       </div>
     </div>
 
